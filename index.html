@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конструктор промптов для рабочих листов | Для преподавателей</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">✏️</div>
+      <div>
+        <h1>Конструктор промптов<br class="mobile-only"> для рабочих листов</h1>
+        <p class="brand-sub">Инструмент методиста: соберите экспертный промпт для генерации worksheet любым ИИ</p>
+      </div>
+    </div>
+    <div class="stats-badge">
+      <span class="stats-num" id="statsFormats">111</span>
+      <span class="stats-text">форматов<br>× 3 возраста = <b id="statsTotal">333</b> комбинаций</span>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <!-- LEFT: WIZARD -->
+  <section class="wizard">
+
+    <!-- STEP 1: CATEGORY -->
+    <div class="card step">
+      <div class="step-head"><span class="step-num">1</span><h2>Категория формата</h2></div>
+      <div class="choice-row" id="categoryRow">
+        <button class="choice-btn" data-category="lexis">
+          <span class="choice-emoji">🧩</span>
+          <span class="choice-title">Лексика</span>
+          <span class="choice-desc">Слова, темы, коллокации, идиомы</span>
+        </button>
+        <button class="choice-btn" data-category="grammar">
+          <span class="choice-emoji">🧠</span>
+          <span class="choice-title">Грамматика</span>
+          <span class="choice-desc">Структуры, времена, конструкции</span>
+        </button>
+        <button class="choice-btn" data-category="reading">
+          <span class="choice-emoji">📖</span>
+          <span class="choice-title">Чтение</span>
+          <span class="choice-desc">Тексты и понимание прочитанного</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: AGE -->
+    <div class="card step">
+      <div class="step-head"><span class="step-num">2</span><h2>Возрастная группа</h2></div>
+      <div class="choice-row" id="ageRow">
+        <button class="choice-btn" data-age="kids">
+          <span class="choice-emoji">🧸</span>
+          <span class="choice-title">Дети</span>
+          <span class="choice-desc">6–10 лет</span>
+        </button>
+        <button class="choice-btn" data-age="teens">
+          <span class="choice-emoji">🎧</span>
+          <span class="choice-title">Подростки</span>
+          <span class="choice-desc">11–17 лет</span>
+        </button>
+        <button class="choice-btn" data-age="adults">
+          <span class="choice-emoji">💼</span>
+          <span class="choice-title">Взрослые</span>
+          <span class="choice-desc">18+</span>
+        </button>
+      </div>
+      <p class="hint" id="ageHint"></p>
+    </div>
+
+    <!-- STEP 3: FORMAT -->
+    <div class="card step">
+      <div class="step-head"><span class="step-num">3</span><h2>Формат рабочего листа</h2></div>
+      <p class="hint" style="margin-top:-6px;margin-bottom:14px">Показаны только форматы, подходящие выбранной возрастной группе. Формат универсален — тему, лексику или грамматическую структуру вы впишете сами на следующем шаге.</p>
+      <div class="format-toolbar">
+        <input type="text" id="formatSearch" placeholder="🔍 Поиск формата (например: бинго, кроссворд, диалог...)">
+        <button class="btn-secondary" id="randomFormatBtn" type="button">🎲 Случайный</button>
+      </div>
+      <div class="format-grid" id="formatGrid"></div>
+      <div class="format-empty" id="formatEmptyMsg" style="display:none">Сначала выберите категорию и возраст выше 👆</div>
+    </div>
+
+    <!-- STEP 4: PARAMETERS -->
+    <div class="card step" id="paramsStep">
+      <div class="step-head"><span class="step-num">4</span><h2>Параметры рабочего листа</h2></div>
+
+      <div class="selected-format-banner" id="selectedFormatBanner" style="display:none"></div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Изучаемый язык</label>
+          <select id="targetLanguage">
+            <option value="английский">Английский</option>
+            <option value="испанский">Испанский</option>
+            <option value="французский">Французский</option>
+            <option value="немецкий">Немецкий</option>
+            <option value="итальянский">Итальянский</option>
+            <option value="китайский">Китайский</option>
+            <option value="японский">Японский</option>
+            <option value="корейский">Корейский</option>
+            <option value="русский (как иностранный)">Русский (как иностранный)</option>
+            <option value="__custom__">Другой язык…</option>
+          </select>
+          <input type="text" id="targetLanguageCustom" placeholder="Впишите язык" style="display:none;margin-top:6px">
+        </div>
+
+        <div class="field">
+          <label>Родной язык учеников (для инструкций)</label>
+          <select id="nativeLanguage">
+            <option value="">Не указывать (инструкции на изучаемом языке)</option>
+            <option value="русский">Русский</option>
+            <option value="английский">Английский</option>
+            <option value="__custom__">Другой…</option>
+          </select>
+          <input type="text" id="nativeLanguageCustom" placeholder="Впишите язык" style="display:none;margin-top:6px">
+        </div>
+
+        <div class="field">
+          <label>Уровень владения (CEFR)</label>
+          <select id="level">
+            <option value="">Не указан / любой</option>
+            <option value="A1 (Beginner)">A1 — Beginner</option>
+            <option value="A2 (Elementary)">A2 — Elementary</option>
+            <option value="B1 (Intermediate)">B1 — Intermediate</option>
+            <option value="B2 (Upper-Intermediate)">B2 — Upper-Intermediate</option>
+            <option value="C1 (Advanced)">C1 — Advanced</option>
+            <option value="C2 (Proficiency)">C2 — Proficiency</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Формат занятия</label>
+          <select id="workMode">
+            <option value="индивидуально">Индивидуально (1 ученик)</option>
+            <option value="в парах">Работа в парах</option>
+            <option value="в мини-группе">Мини-группа (3–6 человек)</option>
+            <option value="в классе">Целый класс / поток</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Объём материала</label>
+          <select id="volume">
+            <option value="компактный (1 страница A4, 5-6 заданий)">Компактный — 1 страница</option>
+            <option value="стандартный (1 страница A4, насыщенная заданиями)" selected>Стандартный — насыщенная страница</option>
+            <option value="расширенный (разворот A4, 2 страницы)">Расширенный — разворот на 2 страницы</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Целевой ИИ-инструмент</label>
+          <select id="outputMode">
+            <option value="text">Текстовый ИИ (ChatGPT, Claude, Gemini) — готовый текстовый контент</option>
+            <option value="image">Генератор изображений (Midjourney, DALL·E, Ideogram, Nano Banana) — цельная картинка рабочего листа</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field field-full">
+        <label>Тема / лексика / грамматическая структура <span class="req">*</span></label>
+        <p class="hint" style="margin:0 0 8px">Впишите то, что нужно именно вам: любую тему, список слов, грамматическую конструкцию или текст — формат подстроится под неё.</p>
+        <input type="text" id="topicInput" placeholder="Например: «животные», «Present Perfect», «профессии», «текст про путешествие в Италию»…">
+      </div>
+
+      <div class="field field-full">
+        <label>Стиль визуального оформления <span class="style-count">(20 стилей на выбор)</span></label>
+        <div class="format-toolbar">
+          <input type="text" id="styleSearch" placeholder="🔍 Поиск стиля (например: минимализм, акварель, неон...)">
+        </div>
+        <div class="style-grid" id="styleGrid"></div>
+        <input type="text" id="styleCustom" placeholder="Или опишите свой стиль оформления…" style="margin-top:10px">
+      </div>
+
+      <div class="field field-full">
+        <label>Дополнительные опции</label>
+        <div class="checkbox-row">
+          <label class="checkbox-opt"><input type="checkbox" id="optAnswerKey" checked> Добавить ключ с ответами</label>
+          <label class="checkbox-opt"><input type="checkbox" id="optHeader" checked> Шапка «Имя / Дата / Оценка»</label>
+          <label class="checkbox-opt"><input type="checkbox" id="optMethodNote"> Методическая заметка для преподавателя (цель, критерии успеха)</label>
+          <label class="checkbox-opt"><input type="checkbox" id="optBilingual"> Двуязычные инструкции (изучаемый + родной язык)</label>
+          <label class="checkbox-opt"><input type="checkbox" id="optDifferentiation"> Добавить облегчённый и усложнённый вариант задания (дифференциация)</label>
+        </div>
+      </div>
+
+      <div class="field field-full">
+        <label>Дополнительные пожелания (необязательно)</label>
+        <textarea id="extraNotes" rows="3" placeholder="Например: использовать имя ученика Аня, добавить QR-код с аудио, тема урока — «Хэллоуин», избегать сложной лексики про..."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: LIVE PROMPT -->
+  <aside class="prompt-panel">
+    <div class="prompt-panel-inner">
+      <div class="prompt-head">
+        <h2>Готовый промпт</h2>
+        <div class="prompt-actions">
+          <button class="btn-icon" id="copyBtn" title="Скопировать">📋 Копировать</button>
+          <button class="btn-icon" id="downloadBtn" title="Скачать .txt">⬇️ Скачать</button>
+        </div>
+      </div>
+      <textarea id="promptOutput" readonly rows="22"></textarea>
+      <p class="copy-msg" id="copyMsg"></p>
+
+      <div class="history-block">
+        <div class="history-head">
+          <h3>История промптов</h3>
+          <button class="btn-link" id="clearHistoryBtn">Очистить</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer class="page-footer">
+  <p>Конструктор промптов для преподавателей — 458 экспертных форматов рабочих листов × 3 возрастные группы. Сделано на Arena.ai Agent Mode.</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a168eae8eef911d3',t:'MTc4MzI4MTIyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
